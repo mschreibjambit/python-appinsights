@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.11.11
+- Fix syntax error
+
 ## 0.11.10
 
 - Add `track_availability`.

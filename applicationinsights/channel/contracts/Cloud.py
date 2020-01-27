@@ -57,8 +57,8 @@ class Cloud(object):
         Args:
             value (string). the property value
         """
-        if value == self._defaults['ai.cloud.roleName'] and 'ai.cloud.roleName' in self_values:
-            def self._values['ai.cloud.roleName']
+        if value == self._defaults['ai.cloud.roleName'] and 'ai.cloud.roleName' in self._values:
+            del self._values['ai.cloud.roleName']
         else:
             self._values['ai.cloud.roleName'] = value
 
