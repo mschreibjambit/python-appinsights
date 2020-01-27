@@ -1,11 +1,13 @@
+from applicationinsights import channel, exceptions
 import unittest
 
-import sys, os, os.path
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+import sys
+import os
+import os.path
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
-
-from applicationinsights import channel, exceptions
 
 
 class TestEnable(unittest.TestCase):
@@ -28,7 +30,7 @@ class TestEnable(unittest.TestCase):
         self.assertEqual('foo', data.ikey)
         self.assertEqual('Microsoft.ApplicationInsights.Exception', data.name)
         self.assertEqual('bar', data.data.base_data.properties['foo'])
-        self.assertEqual(1001, data.tags.get('ai.operation.id')) 
+        self.assertEqual(1001, data.tags.get('ai.operation.id'))
 
     def test_enable_raises_exception_on_no_instrumentation_key(self):
         self.assertRaises(Exception, exceptions.enable, None)

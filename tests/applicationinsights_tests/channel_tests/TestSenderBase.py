@@ -1,3 +1,4 @@
+from applicationinsights import channel
 import random
 import unittest
 import time
@@ -10,12 +11,14 @@ except ImportError:
     # Python 3.x
     import http.server as HTTPServer
 
-import sys, os, os.path
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+import sys
+import os
+import os.path
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
 
-from applicationinsights import channel
 
 class TestSenderBase(unittest.TestCase):
     def test_construct(self):
@@ -51,10 +54,12 @@ class TestSenderBase(unittest.TestCase):
         actual = channel.SenderBase("http://localhost:" + str(port) + "/track")
         actual.queue = channel.QueueBase(None)
         MockHTTPRequestHandler.ExpectedContent = "[42, 13]"
-        MockHTTPRequestHandler.TestCase = self # save a reference to the test case in our handler
+        # save a reference to the test case in our handler
+        MockHTTPRequestHandler.TestCase = self
         thread = WorkerThread(actual)
         thread.start()
-        runHttpHandlerOnce(handler=MockHTTPRequestHandler, port=port) # run the HTTP request
+        runHttpHandlerOnce(handler=MockHTTPRequestHandler,
+                           port=port)  # run the HTTP request
         thread.join()
         if "failed" in dir(self):
             self.fail(self.failed)
@@ -68,7 +73,7 @@ class WorkerThread(threading.Thread):
 
     def run(self):
         time.sleep(1)
-        self.sender.send([ MockSerializable(42), MockSerializable(13) ])
+        self.sender.send([MockSerializable(42), MockSerializable(13)])
 
 
 class MockSerializable(object):
@@ -82,6 +87,7 @@ class MockSerializable(object):
 class MockHTTPRequestHandler(HTTPServer.BaseHTTPRequestHandler):
     ExpectedContent = None
     TestCase = None
+
     def do_POST(self):
         contentLength = int(self.headers['Content-Length'])
         content = self.rfile.read(contentLength)
@@ -95,7 +101,8 @@ class MockHTTPRequestHandler(HTTPServer.BaseHTTPRequestHandler):
         if "application/json; charset=utf-8" != self.headers["Content-Type"]:
             MockHTTPRequestHandler.TestCase.failed = '"application/json; charset=utf-8" != self.headers.type'
         if MockHTTPRequestHandler.ExpectedContent != content:
-            MockHTTPRequestHandler.TestCase.failed = '"' + MockHTTPRequestHandler.ExpectedContent + '" != content'
+            MockHTTPRequestHandler.TestCase.failed = '"' + \
+                MockHTTPRequestHandler.ExpectedContent + '" != content'
 
         self.send_response(200)
         self.send_header("Content-Type", "application/json")

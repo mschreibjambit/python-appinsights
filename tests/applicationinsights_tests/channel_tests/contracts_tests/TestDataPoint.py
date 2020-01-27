@@ -1,22 +1,25 @@
+from .Utils import TestJsonEncoder
+from applicationinsights.channel.contracts import *
 import unittest
 import datetime
 import uuid
 import sys
 import json
 
-import sys, os, os.path
-root_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..', '..')
+import sys
+import os
+import os.path
+root_directory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..', '..', '..')
 if root_directory not in sys.path:
     sys.path.append(root_directory)
 
-from applicationinsights.channel.contracts import *
-from .Utils import TestJsonEncoder
 
 class TestDataPoint(unittest.TestCase):
     def test_construct(self):
         item = DataPoint()
         self.assertNotEqual(item, None)
-    
+
     def test_name_property_works_as_expected(self):
         expected = 'Test string'
         item = DataPoint()
@@ -27,7 +30,7 @@ class TestDataPoint(unittest.TestCase):
         item.name = expected
         actual = item.name
         self.assertEqual(expected, actual)
-    
+
     def test_kind_property_works_as_expected(self):
         expected = object()
         item = DataPoint()
@@ -38,7 +41,7 @@ class TestDataPoint(unittest.TestCase):
         item.kind = expected
         actual = item.kind
         self.assertEqual(expected, actual)
-    
+
     def test_value_property_works_as_expected(self):
         expected = 1.5
         item = DataPoint()
@@ -49,7 +52,7 @@ class TestDataPoint(unittest.TestCase):
         item.value = expected
         actual = item.value
         self.assertEqual(expected, actual)
-    
+
     def test_count_property_works_as_expected(self):
         expected = 42
         item = DataPoint()
@@ -60,7 +63,7 @@ class TestDataPoint(unittest.TestCase):
         item.count = expected
         actual = item.count
         self.assertEqual(expected, actual)
-    
+
     def test_min_property_works_as_expected(self):
         expected = 1.5
         item = DataPoint()
@@ -71,7 +74,7 @@ class TestDataPoint(unittest.TestCase):
         item.min = expected
         actual = item.min
         self.assertEqual(expected, actual)
-    
+
     def test_max_property_works_as_expected(self):
         expected = 1.5
         item = DataPoint()
@@ -82,7 +85,7 @@ class TestDataPoint(unittest.TestCase):
         item.max = expected
         actual = item.max
         self.assertEqual(expected, actual)
-    
+
     def test_std_dev_property_works_as_expected(self):
         expected = 1.5
         item = DataPoint()
@@ -93,7 +96,7 @@ class TestDataPoint(unittest.TestCase):
         item.std_dev = expected
         actual = item.std_dev
         self.assertEqual(expected, actual)
-    
+
     def test_serialize_works_as_expected(self):
         item = DataPoint()
         item.name = 'Test string'
@@ -103,7 +106,7 @@ class TestDataPoint(unittest.TestCase):
         item.min = 1.5
         item.max = 1.5
         item.std_dev = 1.5
-        actual = json.dumps(item.write(), separators=(',', ':'), cls=TestJsonEncoder)
+        actual = json.dumps(item.write(), separators=(
+            ',', ':'), cls=TestJsonEncoder)
         expected = '{"name":"Test string","kind":{},"value":1.5,"count":42,"min":1.5,"max":1.5,"stdDev":1.5}'
         self.assertEqual(expected, actual)
-

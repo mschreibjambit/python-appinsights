@@ -1,12 +1,15 @@
+from applicationinsights import requests
 import unittest
 import wsgiref
 
-import sys, os, os.path
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+import sys
+import os
+import os.path
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
 
-from applicationinsights import requests
 
 class TestWSGIApplication(unittest.TestCase):
     def test_construct(self):
@@ -50,7 +53,8 @@ class TestWSGIApplication(unittest.TestCase):
         self.assertEqual(b'Hello World!', result_string)
         self.assertEqual(1, mock_start_response_calls)
         self.assertEqual('201 BLAH', mock_start_response_status)
-        self.assertEqual([('Content-type', 'text/plain')], mock_start_response_headers)
+        self.assertEqual([('Content-type', 'text/plain')],
+                         mock_start_response_headers)
 
     def _intercept_sender(self, wsgi_application):
         client = wsgi_application.client

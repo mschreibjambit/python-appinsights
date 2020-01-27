@@ -1,13 +1,16 @@
+from applicationinsights import channel
 import unittest
 
-import sys, os, os.path
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..')
+import sys
+import os
+import os.path
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
 
-from applicationinsights import channel
 
-class TestTelemetryChannel(unittest.TestCase):   
+class TestTelemetryChannel(unittest.TestCase):
     def test_construct(self):
         actual = channel.TelemetryChannel()
         self.assertIsNotNone(actual)
@@ -79,17 +82,18 @@ class TestTelemetryChannel(unittest.TestCase):
         context_global.instrumentation_key = "42"
         actual = channel.TelemetryChannel(context_global, queue)
         cases = [
-                    channel.contracts.EventData(),
-                    channel.contracts.MetricData(),
-                    channel.contracts.MessageData(),
-                    channel.contracts.PageViewData(),
-                    channel.contracts.ExceptionData(),
-                ]
+            channel.contracts.EventData(),
+            channel.contracts.MetricData(),
+            channel.contracts.MessageData(),
+            channel.contracts.PageViewData(),
+            channel.contracts.ExceptionData(),
+        ]
         for item in cases:
             actual.write(item)
             actual.flush()
             self.assertIsNotNone(mock_sender.data)
-            self.assertTrue(isinstance(mock_sender.data, channel.contracts.Envelope))
+            self.assertTrue(isinstance(mock_sender.data,
+                                       channel.contracts.Envelope))
             self.assertEqual(item.ENVELOPE_TYPE_NAME, mock_sender.data.name)
             self.assertIsNotNone(mock_sender.data.time)
             self.assertEqual("42", mock_sender.data.ikey)
@@ -106,7 +110,8 @@ class TestTelemetryChannel(unittest.TestCase):
             for key, value in context_global.operation.write().items():
                 self.assertEqual(value, mock_sender.data.tags[key])
             self.assertIsNotNone(mock_sender.data.data)
-            self.assertEqual(item.DATA_TYPE_NAME, mock_sender.data.data.base_type)
+            self.assertEqual(item.DATA_TYPE_NAME,
+                             mock_sender.data.data.base_type)
             self.assertEqual(item, mock_sender.data.data.base_data)
 
 
@@ -124,4 +129,4 @@ class MockTelemetrySender(channel.TelemetryChannel().sender.__class__):
         self.send_buffer_size = 1
 
     def send(self, envelope):
-        self.data = envelope[0];
+        self.data = envelope[0]

@@ -1,17 +1,21 @@
+from applicationinsights import channel
 import unittest
 import time
 
-import sys, os, os.path
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+import sys
+import os
+import os.path
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
 
-from applicationinsights import channel
 
 class TestAsynchronousSender(unittest.TestCase):
     def test_construct(self):
         sender = channel.AsynchronousSender()
-        self.assertEqual('https://dc.services.visualstudio.com/v2/track', sender.service_endpoint_uri)
+        self.assertEqual(
+            'https://dc.services.visualstudio.com/v2/track', sender.service_endpoint_uri)
         self.assertEqual(1.0, sender.send_interval)
         self.assertEqual(3.0, sender.send_time)
 

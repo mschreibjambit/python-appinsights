@@ -1,17 +1,20 @@
+from applicationinsights.logging.LoggingHandler import enabled_instrumentation_keys
+from applicationinsights import logging
 import unittest
 import logging as pylogging
 
-import sys, os, os.path
+import sys
+import os
+import os.path
 
 from applicationinsights.channel import AsynchronousQueue, AsynchronousSender
 from applicationinsights.channel import SynchronousQueue, SynchronousSender
 
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
 
-from applicationinsights import logging
-from applicationinsights.logging.LoggingHandler import enabled_instrumentation_keys
 
 class TestEnable(unittest.TestCase):
     def test_enable(self):
@@ -20,7 +23,8 @@ class TestEnable(unittest.TestCase):
         self.assertEqual('LoggingHandler', handler1.__class__.__name__)
         self.assertEqual('foo', handler1.client.context.instrumentation_key)
         self.assertIsInstance(handler1.client.channel.queue, SynchronousQueue)
-        self.assertIsInstance(handler1.client.channel.sender, SynchronousSender)
+        self.assertIsInstance(
+            handler1.client.channel.sender, SynchronousSender)
         handler2 = logging.enable('foo')
         self.assertEqual('LoggingHandler', handler2.__class__.__name__)
         self.assertEqual('foo', handler2.client.context.instrumentation_key)
@@ -38,13 +42,15 @@ class TestEnable(unittest.TestCase):
 
     def test_enable_with_endpoint(self):
         handler = logging.enable('foo', endpoint='http://bar')
-        self.assertEqual(handler.client.channel.sender.service_endpoint_uri, 'http://bar')
+        self.assertEqual(
+            handler.client.channel.sender.service_endpoint_uri, 'http://bar')
         pylogging.getLogger().removeHandler(handler)
 
     def test_enable_with_async(self):
         handler = logging.enable('foo', async_=True)
         self.assertIsInstance(handler.client.channel.queue, AsynchronousQueue)
-        self.assertIsInstance(handler.client.channel.sender, AsynchronousSender)
+        self.assertIsInstance(
+            handler.client.channel.sender, AsynchronousSender)
         pylogging.getLogger().removeHandler(handler)
 
     def test_enable_raises_exception_on_async_with_telemetry_channel(self):
@@ -53,7 +59,8 @@ class TestEnable(unittest.TestCase):
 
     def test_enable_raises_exception_on_endpoint_with_telemetry_channel(self):
         with self.assertRaises(Exception):
-            logging.enable('foo', endpoint='http://bar', telemetry_channel=MockChannel())
+            logging.enable('foo', endpoint='http://bar',
+                           telemetry_channel=MockChannel())
 
     def test_enable_with_level(self):
         handler = logging.enable('foo', level='DEBUG')
@@ -92,11 +99,16 @@ class TestLoggingHandler(unittest.TestCase):
         logger, sender, channel = self._setup_logger()
 
         expected = [
-            (logger.debug, 'debug message', 'Microsoft.ApplicationInsights.Message', 'test', 'MessageData', 0, 'simple_logger - DEBUG - debug message'),
-            (logger.info, 'info message', 'Microsoft.ApplicationInsights.Message', 'test', 'MessageData', 1, 'simple_logger - INFO - info message'),
-            (logger.warning, 'warn message', 'Microsoft.ApplicationInsights.Message', 'test', 'MessageData', 2, 'simple_logger - WARNING - warn message'),
-            (logger.error, 'error message', 'Microsoft.ApplicationInsights.Message', 'test', 'MessageData', 3, 'simple_logger - ERROR - error message'),
-            (logger.critical, 'critical message', 'Microsoft.ApplicationInsights.Message', 'test', 'MessageData', 4, 'simple_logger - CRITICAL - critical message')
+            (logger.debug, 'debug message', 'Microsoft.ApplicationInsights.Message',
+             'test', 'MessageData', 0, 'simple_logger - DEBUG - debug message'),
+            (logger.info, 'info message', 'Microsoft.ApplicationInsights.Message',
+             'test', 'MessageData', 1, 'simple_logger - INFO - info message'),
+            (logger.warning, 'warn message', 'Microsoft.ApplicationInsights.Message',
+             'test', 'MessageData', 2, 'simple_logger - WARNING - warn message'),
+            (logger.error, 'error message', 'Microsoft.ApplicationInsights.Message',
+             'test', 'MessageData', 3, 'simple_logger - ERROR - error message'),
+            (logger.critical, 'critical message', 'Microsoft.ApplicationInsights.Message',
+             'test', 'MessageData', 4, 'simple_logger - CRITICAL - critical message')
         ]
 
         for logging_function, logging_parameter, envelope_type, ikey, data_type, severity_level, message in expected:
@@ -107,8 +119,9 @@ class TestLoggingHandler(unittest.TestCase):
             self.assertEqual(ikey, data.ikey)
             self.assertEqual(data_type, data.data.base_type)
             self.assertEqual(message, data.data.base_data.message)
-            self.assertEqual(severity_level, data.data.base_data.severity_level)
-        
+            self.assertEqual(
+                severity_level, data.data.base_data.severity_level)
+
         channel.context.properties['foo'] = 'bar'
         channel.context.operation.id = 1001
         logger.info('info message')
@@ -146,7 +159,8 @@ class TestLoggingHandler(unittest.TestCase):
         queue._sender = sender
         sender.queue = queue
 
-        formatter = pylogging.Formatter('%(name)s - %(levelname)s - %(message)s')
+        formatter = pylogging.Formatter(
+            '%(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 

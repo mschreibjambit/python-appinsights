@@ -1,13 +1,15 @@
+from applicationinsights import channel
 import unittest
 import platform
 import locale
 
-import sys, os, os.path
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..')
+import sys
+import os
+import os.path
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
-
-from applicationinsights import channel
 
 
 class TestTelemetryContext(unittest.TestCase):
@@ -67,7 +69,8 @@ class TestTelemetryContext(unittest.TestCase):
         self.assertIsInstance(context.application, Exception)
         context.application = channel.contracts.Application()
         self.assertIsNotNone(context.application)
-        self.assertIsInstance(context.application, channel.contracts.Application)
+        self.assertIsInstance(context.application,
+                              channel.contracts.Application)
 
     def test_user_attribute_works_as_expected(self):
         context = channel.TelemetryContext()

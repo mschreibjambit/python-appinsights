@@ -1,14 +1,15 @@
+from applicationinsights import TelemetryClient, channel
 import unittest
 import inspect
 import json
 import sys
 
-import os, os.path
-rootDirectory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+import os
+import os.path
+rootDirectory = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..', '..')
 if rootDirectory not in sys.path:
     sys.path.append(rootDirectory)
-
-from applicationinsights import TelemetryClient, channel
 
 
 class TestTelemetryClient(unittest.TestCase):
@@ -37,9 +38,10 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_event_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient('99999999-9999-9999-9999-999999999999', channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient('99999999-9999-9999-9999-999999999999',
+                                 channel.TelemetryChannel(context=None, queue=queue))
         client.context.device = None
-        client.track_event('test', { 'foo': 'bar' }, { 'x': 42 })
+        client.track_event('test', {'foo': 'bar'}, {'x': 42})
         client.flush()
         expected = '{"ver": 1, "name": "Microsoft.ApplicationInsights.Event", "time": "TIME_PLACEHOLDER", "sampleRate": 100.0, "iKey": "99999999-9999-9999-9999-999999999999", "tags": {"ai.device.id": "DEVICE_ID_PLACEHOLDER", "ai.device.locale": "DEVICE_LOCALE_PLACEHOLDER", "ai.device.osVersion": "DEVICE_OS_VERSION_PLACEHOLDER", "ai.device.type": "DEVICE_TYPE_PLACEHOLDER", "ai.internal.sdkVersion": "SDK_VERSION_PLACEHOLDER"}, "data": {"baseType": "EventData", "baseData": {"ver": 2, "name": "test", "properties": {"foo": "bar"}, "measurements": {"x": 42}}}}'
         sender.data.time = 'TIME_PLACEHOLDER'
@@ -55,7 +57,8 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_event_with_context_properties_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient('99999999-9999-9999-9999-999999999999', channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient('99999999-9999-9999-9999-999999999999',
+                                 channel.TelemetryChannel(context=None, queue=queue))
         client.context.device = None
         client.context.properties['foo'] = 'bar'
         client.track_event('test')
@@ -115,9 +118,11 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_metric_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient('99999999-9999-9999-9999-999999999999', channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient('99999999-9999-9999-9999-999999999999',
+                                 channel.TelemetryChannel(context=None, queue=queue))
         client.context.device = None
-        client.track_metric('metric', 42, channel.contracts.DataPointType.aggregation, 13, 1, 123, 111, {'foo': 'bar'})
+        client.track_metric(
+            'metric', 42, channel.contracts.DataPointType.aggregation, 13, 1, 123, 111, {'foo': 'bar'})
         client.flush()
         expected = '{"ver": 1, "name": "Microsoft.ApplicationInsights.Metric", "time": "TIME_PLACEHOLDER", "sampleRate": 100.0, "iKey": "99999999-9999-9999-9999-999999999999", "tags": {"ai.device.id": "DEVICE_ID_PLACEHOLDER", "ai.device.locale": "DEVICE_LOCALE_PLACEHOLDER", "ai.device.osVersion": "DEVICE_OS_VERSION_PLACEHOLDER", "ai.device.type": "DEVICE_TYPE_PLACEHOLDER", "ai.internal.sdkVersion": "SDK_VERSION_PLACEHOLDER"}, "data": {"baseType": "MetricData", "baseData": {"ver": 2, "metrics": [{"name": "metric", "kind": 1, "value": 42, "count": 13, "min": 1, "max": 123, "stdDev": 111}], "properties": {"foo": "bar"}}}}'
         sender.data.time = 'TIME_PLACEHOLDER'
@@ -133,9 +138,10 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_trace_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient('99999999-9999-9999-9999-999999999999', channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient('99999999-9999-9999-9999-999999999999',
+                                 channel.TelemetryChannel(context=None, queue=queue))
         client.context.device = None
-        client.track_trace('test', { 'foo': 'bar' }, severity='WARNING')
+        client.track_trace('test', {'foo': 'bar'}, severity='WARNING')
         client.flush()
         expected = '{"ver": 1, "name": "Microsoft.ApplicationInsights.Message", "time": "TIME_PLACEHOLDER", "sampleRate": 100.0, "iKey": "99999999-9999-9999-9999-999999999999", "tags": {"ai.device.id": "DEVICE_ID_PLACEHOLDER", "ai.device.locale": "DEVICE_LOCALE_PLACEHOLDER", "ai.device.osVersion": "DEVICE_OS_VERSION_PLACEHOLDER", "ai.device.type": "DEVICE_TYPE_PLACEHOLDER", "ai.internal.sdkVersion": "SDK_VERSION_PLACEHOLDER"}, "data": {"baseType": "MessageData", "baseData": {"ver": 2, "message": "test", "severityLevel": 2, "properties": {"foo": "bar"}}}}'
         sender.data.time = 'TIME_PLACEHOLDER'
@@ -151,9 +157,11 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_pageview_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient('99999999-9999-9999-9999-999999999999', channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient('99999999-9999-9999-9999-999999999999',
+                                 channel.TelemetryChannel(context=None, queue=queue))
         client.context.device = None
-        client.track_pageview('test', 'http://tempuri.org', 13, { 'foo': 'bar' }, { 'x': 42 })
+        client.track_pageview('test', 'http://tempuri.org',
+                              13, {'foo': 'bar'}, {'x': 42})
         client.flush()
         expected = '{"ver": 1, "name": "Microsoft.ApplicationInsights.PageView", "time": "TIME_PLACEHOLDER", "sampleRate": 100.0, "iKey": "99999999-9999-9999-9999-999999999999", "tags": {"ai.device.id": "DEVICE_ID_PLACEHOLDER", "ai.device.locale": "DEVICE_LOCALE_PLACEHOLDER", "ai.device.osVersion": "DEVICE_OS_VERSION_PLACEHOLDER", "ai.device.type": "DEVICE_TYPE_PLACEHOLDER", "ai.internal.sdkVersion": "SDK_VERSION_PLACEHOLDER"}, "data": {"baseType": "PageViewData", "baseData": {"ver": 2, "url": "http://tempuri.org", "name": "test", "duration": 13, "properties": {"foo": "bar"}, "measurements": {"x": 42}}}}'
         sender.data.time = 'TIME_PLACEHOLDER'
@@ -169,12 +177,14 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_exception_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient('99999999-9999-9999-9999-999999999999', channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient('99999999-9999-9999-9999-999999999999',
+                                 channel.TelemetryChannel(context=None, queue=queue))
         client.context.device = None
         try:
             raise Exception("blah")
         except Exception as e:
-            client.track_exception(*sys.exc_info(), properties={}, measurements={ 'x': 42 })
+            client.track_exception(
+                *sys.exc_info(), properties={}, measurements={'x': 42})
             client.flush()
         expected = '{"ver": 1, "name": "Microsoft.ApplicationInsights.Exception", "time": "TIME_PLACEHOLDER", "sampleRate": 100.0, "iKey": "99999999-9999-9999-9999-999999999999", "tags": {"ai.device.id": "DEVICE_ID_PLACEHOLDER", "ai.device.locale": "DEVICE_LOCALE_PLACEHOLDER", "ai.device.osVersion": "DEVICE_OS_VERSION_PLACEHOLDER", "ai.device.type": "DEVICE_TYPE_PLACEHOLDER", "ai.internal.sdkVersion": "SDK_VERSION_PLACEHOLDER"}, "data": {"baseType": "ExceptionData", "baseData": {"ver": 2, "exceptions": [{"id": 1, "outerId": 0, "typeName": "Exception", "message": "blah", "hasFullStack": true, "parsedStack": [{"level": 0, "method": "test_track_exception_works_as_expected", "assembly": "Unknown", "fileName": "TestTelemetryClient.py", "line": 0}]}], "measurements": {"x": 42}}}}'
         sender.data.time = 'TIME_PLACEHOLDER'
@@ -211,10 +221,12 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_request_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient(channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient(
+            channel.TelemetryChannel(context=None, queue=queue))
         client.context.instrumentation_key = '99999999-9999-9999-9999-999999999999'
         client.context.device = None
-        client.track_request('test', 'http://tempuri.org', True, 'START_TIME', 13, 42, 'OPTIONS', { 'foo': 'bar' }, { 'x': 42 }, 'ID_PLACEHOLDER')
+        client.track_request('test', 'http://tempuri.org', True, 'START_TIME',
+                             13, 42, 'OPTIONS', {'foo': 'bar'}, {'x': 42}, 'ID_PLACEHOLDER')
         client.flush()
         expected = '{"ver": 1, "name": "Microsoft.ApplicationInsights.Request", "time": "TIME_PLACEHOLDER", "sampleRate": 100.0, "iKey": "99999999-9999-9999-9999-999999999999", "tags": {"ai.device.id": "DEVICE_ID_PLACEHOLDER", "ai.device.locale": "DEVICE_LOCALE_PLACEHOLDER", "ai.device.osVersion": "DEVICE_OS_VERSION_PLACEHOLDER", "ai.device.type": "DEVICE_TYPE_PLACEHOLDER", "ai.internal.sdkVersion": "SDK_VERSION_PLACEHOLDER"}, "data": {"baseType": "RequestData", "baseData": {"ver": 2, "id": "ID_PLACEHOLDER", "name": "test", "duration": "00:00:00.013", "responseCode": "42", "success": true, "url": "http://tempuri.org", "properties": {"foo": "bar"}, "measurements": {"x": 42}}}}'
         sender.data.time = 'TIME_PLACEHOLDER'
@@ -230,10 +242,12 @@ class TestTelemetryClient(unittest.TestCase):
     def test_track_dependency_works_as_expected(self):
         sender = MockTelemetrySender()
         queue = channel.SynchronousQueue(sender)
-        client = TelemetryClient(channel.TelemetryChannel(context=None, queue=queue))
+        client = TelemetryClient(
+            channel.TelemetryChannel(context=None, queue=queue))
         client.context.instrumentation_key = '99999999-9999-9999-9999-999999999999'
         client.context.device = None
-        client.track_dependency('test', 'COMMAND_PLACEHOLDER', 'HTTP', 'localhost', 13, True, 200, { 'foo': 'bar' }, { 'x': 42 }, 'ID_PLACEHOLDER')
+        client.track_dependency('test', 'COMMAND_PLACEHOLDER', 'HTTP', 'localhost', 13, True, 200, {
+                                'foo': 'bar'}, {'x': 42}, 'ID_PLACEHOLDER')
         client.flush()
         expected = '{"ver": 1, "name": "Microsoft.ApplicationInsights.RemoteDependency", "time": "TIME_PLACEHOLDER", "sampleRate": 100.0, "iKey": "99999999-9999-9999-9999-999999999999", "tags": {"ai.device.id": "DEVICE_ID_PLACEHOLDER", "ai.device.locale": "DEVICE_LOCALE_PLACEHOLDER", "ai.device.osVersion": "DEVICE_OS_VERSION_PLACEHOLDER", "ai.device.type": "DEVICE_TYPE_PLACEHOLDER", "ai.internal.sdkVersion": "SDK_VERSION_PLACEHOLDER"}, "data": {"baseType": "RemoteDependencyData", "baseData": {"ver": 2, "name": "test", "id": "ID_PLACEHOLDER", "resultCode": "200", "duration": "00:00:00.013", "success": true, "data": "COMMAND_PLACEHOLDER", "target": "localhost", "type": "HTTP", "properties": {"foo": "bar"}, "measurements": {"x": 42}}}}'
         sender.data.time = 'TIME_PLACEHOLDER'

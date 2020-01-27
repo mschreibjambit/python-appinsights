@@ -18,6 +18,7 @@ TEST_IKEY = '12345678-1234-5678-9012-123456789abc'
 TEST_ENDPOINT = 'https://test.endpoint/v2/track'
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+
 class AITestCase(TestCase):
     def plug_sender(self):
         # Reset saved objects
@@ -33,10 +34,12 @@ class AITestCase(TestCase):
 
     def get_events(self, count):
         self.channel.flush()
-        self.assertEqual(len(self.events), count, "Expected %d event(s) in queue (%d actual)" % (count, len(self.events)))
+        self.assertEqual(len(self.events), count, "Expected %d event(s) in queue (%d actual)" % (
+            count, len(self.events)))
         if count == 1:
             return self.events[0]
         return self.events
+
 
 @modify_settings(**{MIDDLEWARE_NAME: {'append': 'applicationinsights.django.ApplicationInsightsMiddleware'}})
 @override_settings(
@@ -58,7 +61,8 @@ class MiddlewareTests(AITestCase):
         event = self.get_events(1)
         tags = event['tags']
         data = event['data']['baseData']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
         self.assertEqual(event['iKey'], TEST_IKEY)
         self.assertEqual(tags['ai.operation.name'], 'GET /', "Operation name")
         self.assertEqual(data['name'], 'GET /', "Request name")
@@ -77,21 +81,25 @@ class MiddlewareTests(AITestCase):
         tags = reqev['tags']
         data = reqev['data']['baseData']
         reqid = tags['ai.operation.id']
-        self.assertEqual(reqev['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(
+            reqev['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
         self.assertEqual(data['id'], reqid, "Request id")
         self.assertEqual(data['name'], 'GET /logger', "Operation name")
-        self.assertEqual(data['url'], 'http://testserver/logger', "Request url")
+        self.assertEqual(
+            data['url'], 'http://testserver/logger', "Request url")
 
         self.assertTrue(reqid, "Request id not empty")
 
         # Check log event
         tags = logev['tags']
         data = logev['data']['baseData']
-        self.assertEqual(logev['name'], 'Microsoft.ApplicationInsights.Message', "Event type")
+        self.assertEqual(
+            logev['name'], 'Microsoft.ApplicationInsights.Message', "Event type")
         self.assertEqual(logev['iKey'], TEST_IKEY)
         self.assertEqual(tags['ai.operation.parentId'], reqid, "Parent id")
         self.assertEqual(data['message'], 'Logger message', "Log message")
-        self.assertEqual(data['properties']['property'], 'value', "Property=value")
+        self.assertEqual(data['properties']['property'],
+                         'value', "Property=value")
 
     def test_thrower(self):
         """Tests that unhandled exceptions generate an exception telemetry item parented to the request telemetry item"""
@@ -104,26 +112,31 @@ class MiddlewareTests(AITestCase):
         tags = reqev['tags']
         data = reqev['data']['baseData']
         reqid = tags['ai.operation.id']
-        self.assertEqual(reqev['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(
+            reqev['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
         self.assertEqual(reqev['iKey'], TEST_IKEY)
         self.assertEqual(data['id'], reqid, "Request id")
         self.assertEqual(data['responseCode'], 500, "Response code")
         self.assertEqual(data['success'], False, "Success value")
         self.assertEqual(data['name'], 'GET /thrower', "Request name")
-        self.assertEqual(data['url'], 'http://testserver/thrower', "Request url")
+        self.assertEqual(
+            data['url'], 'http://testserver/thrower', "Request url")
 
         self.assertTrue(reqid, "Request id not empty")
 
         # Check exception event
         tags = errev['tags']
         data = errev['data']['baseData']
-        self.assertEqual(errev['name'], 'Microsoft.ApplicationInsights.Exception', "Event type")
-        self.assertEqual(tags['ai.operation.parentId'], reqid, "Exception parent id")
+        self.assertEqual(
+            errev['name'], 'Microsoft.ApplicationInsights.Exception', "Event type")
+        self.assertEqual(tags['ai.operation.parentId'],
+                         reqid, "Exception parent id")
         self.assertEqual(len(data['exceptions']), 1, "Exception count")
         exc = data['exceptions'][0]
         self.assertEqual(exc['typeName'], 'ValueError', "Exception type")
         self.assertEqual(exc['hasFullStack'], True, "Has full stack")
-        self.assertEqual(exc['parsedStack'][0]['method'], 'thrower', "Stack frame method name")
+        self.assertEqual(exc['parsedStack'][0]['method'],
+                         'thrower', "Stack frame method name")
 
     def test_error(self):
         """Tests that Http404 exception does not generate an exception event
@@ -134,11 +147,14 @@ class MiddlewareTests(AITestCase):
         event = self.get_events(1)
         tags = event['tags']
         data = event['data']['baseData']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
-        self.assertEqual(tags['ai.operation.name'], 'GET /errorer', "Operation name")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(tags['ai.operation.name'],
+                         'GET /errorer', "Operation name")
         self.assertEqual(data['responseCode'], 404, "Status code")
         self.assertEqual(data['success'], False, "Success value")
-        self.assertEqual(data['url'], 'http://testserver/errorer', "Request url")
+        self.assertEqual(
+            data['url'], 'http://testserver/errorer', "Request url")
 
     def test_template(self):
         """Tests that views using templates operate correctly and that template data is logged"""
@@ -147,10 +163,12 @@ class MiddlewareTests(AITestCase):
 
         event = self.get_events(1)
         data = event['data']['baseData']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
         self.assertEqual(data['success'], True, "Success value")
         self.assertEqual(data['responseCode'], 200, "Status code")
-        self.assertEqual(data['properties']['template_name'], 'template.html', "Template name")
+        self.assertEqual(data['properties']['template_name'],
+                         'template.html', "Template name")
 
     def test_no_view_arguments(self):
         """Tests that view id logging is off by default"""
@@ -160,8 +178,10 @@ class MiddlewareTests(AITestCase):
 
         event = self.get_events(1)
         data = event['data']['baseData']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
-        self.assertTrue('properties' not in data or 'view_arg_0' not in data['properties'])
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertTrue(
+            'properties' not in data or 'view_arg_0' not in data['properties'])
 
     def test_no_view(self):
         """Tests that requests to URLs not backed by views are still logged"""
@@ -171,11 +191,14 @@ class MiddlewareTests(AITestCase):
         event = self.get_events(1)
         tags = event['tags']
         data = event['data']['baseData']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
         self.assertEqual(data['responseCode'], 404, "Status code")
         self.assertEqual(data['success'], False, "Success value")
-        self.assertEqual(data['name'], 'GET /this/view/does/not/exist', "Request name")
-        self.assertEqual(data['url'], 'http://testserver/this/view/does/not/exist', "Request url")
+        self.assertEqual(
+            data['name'], 'GET /this/view/does/not/exist', "Request name")
+        self.assertEqual(
+            data['url'], 'http://testserver/this/view/does/not/exist', "Request url")
 
     def test_401_success(self):
         """Tests that a 401 status code is considered successful"""
@@ -185,11 +208,15 @@ class MiddlewareTests(AITestCase):
         event = self.get_events(1)
         tags = event['tags']
         data = event['data']['baseData']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
-        self.assertEqual(tags['ai.operation.name'], 'GET /returncode/401', "Operation name")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(tags['ai.operation.name'],
+                         'GET /returncode/401', "Operation name")
         self.assertEqual(data['responseCode'], 401, "Status code")
         self.assertEqual(data['success'], True, "Success value")
-        self.assertEqual(data['url'], 'http://testserver/returncode/401', "Request url")
+        self.assertEqual(
+            data['url'], 'http://testserver/returncode/401', "Request url")
+
 
 @modify_settings(**{MIDDLEWARE_NAME: {'append': 'applicationinsights.django.ApplicationInsightsMiddleware'}})
 class RequestSettingsTests(AITestCase):
@@ -202,8 +229,10 @@ class RequestSettingsTests(AITestCase):
         self.plug_sender()
         self.client.get('/')
         event = self.get_events(1)
-        self.assertEqual(event['data']['baseData']['name'], 'GET aitest.views.home', "Request name")
-        self.assertEqual(event['tags']['ai.operation.name'], 'GET aitest.views.home', "Operation name")
+        self.assertEqual(event['data']['baseData']['name'],
+                         'GET aitest.views.home', "Request name")
+        self.assertEqual(event['tags']['ai.operation.name'],
+                         'GET aitest.views.home', "Operation name")
 
     @override_settings(APPLICATION_INSIGHTS={'ikey': TEST_IKEY, 'use_view_name': False})
     def test_use_view_name_off(self):
@@ -211,8 +240,10 @@ class RequestSettingsTests(AITestCase):
         self.plug_sender()
         self.client.get('/')
         event = self.get_events(1)
-        self.assertEqual(event['data']['baseData']['name'], 'GET /', "Request name")
-        self.assertEqual(event['tags']['ai.operation.name'], 'GET /', "Operation name")
+        self.assertEqual(event['data']['baseData']
+                         ['name'], 'GET /', "Request name")
+        self.assertEqual(event['tags']['ai.operation.name'],
+                         'GET /', "Operation name")
 
     @override_settings(APPLICATION_INSIGHTS={'ikey': TEST_IKEY, 'use_view_name': True})
     def test_view_name_class(self):
@@ -220,8 +251,10 @@ class RequestSettingsTests(AITestCase):
         self.plug_sender()
         self.client.get('/class')
         event = self.get_events(1)
-        self.assertEqual(event['data']['baseData']['name'], 'GET aitest.views.classview', "Request name")
-        self.assertEqual(event['tags']['ai.operation.name'], 'GET aitest.views.classview', "Operation name")
+        self.assertEqual(event['data']['baseData']['name'],
+                         'GET aitest.views.classview', "Request name")
+        self.assertEqual(event['tags']['ai.operation.name'],
+                         'GET aitest.views.classview', "Operation name")
 
     @override_settings(APPLICATION_INSIGHTS=None)
     def test_appinsights_still_supplied(self):
@@ -239,7 +272,8 @@ class RequestSettingsTests(AITestCase):
 
         event = self.get_events(1)
         props = event['data']['baseData']['properties']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
         self.assertEqual(props['view_arg_0'], '24', "View argument")
 
     @override_settings(APPLICATION_INSIGHTS={'ikey': TEST_IKEY, 'log_exceptions': False})
@@ -251,8 +285,10 @@ class RequestSettingsTests(AITestCase):
 
         event = self.get_events(1)
         data = event['data']['baseData']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Request', "Event type")
         self.assertEqual(data['responseCode'], 500, "Response code")
+
 
 class SettingsTests(TestCase):
     def setUp(self):
@@ -269,13 +305,15 @@ class SettingsTests(TestCase):
     def test_default_endpoint(self):
         """Tests that the default endpoint is used when endpoint is unspecified"""
         client = common.create_client()
-        self.assertEqual(client.channel.sender.service_endpoint_uri, DEFAULT_ENDPOINT)
+        self.assertEqual(
+            client.channel.sender.service_endpoint_uri, DEFAULT_ENDPOINT)
 
     @override_settings(APPLICATION_INSIGHTS={'ikey': TEST_IKEY, 'endpoint': TEST_ENDPOINT})
     def test_overridden_endpoint(self):
         """Tests that the endpoint is used when specified"""
         client = common.create_client()
-        self.assertEqual(client.channel.sender.service_endpoint_uri, TEST_ENDPOINT)
+        self.assertEqual(
+            client.channel.sender.service_endpoint_uri, TEST_ENDPOINT)
 
     @override_settings(APPLICATION_INSIGHTS={'ikey': TEST_IKEY, 'send_time': 999})
     def test_send_time(self):
@@ -293,13 +331,15 @@ class SettingsTests(TestCase):
     def test_default_send_time(self):
         """Tests that send_time is equal to the default when it is unspecified"""
         client = common.create_client()
-        self.assertEqual(client.channel.sender.send_time, AsynchronousSender().send_time)
+        self.assertEqual(client.channel.sender.send_time,
+                         AsynchronousSender().send_time)
 
     @override_settings(APPLICATION_INSIGHTS={'ikey': TEST_IKEY})
     def test_default_send_interval(self):
         """Tests that send_interval is equal to the default when it is unspecified"""
         client = common.create_client()
-        self.assertEqual(client.channel.sender.send_interval, AsynchronousSender().send_interval)
+        self.assertEqual(client.channel.sender.send_interval,
+                         AsynchronousSender().send_interval)
 
 
 @override_settings(LOGGING={
@@ -331,7 +371,8 @@ class LoggerTests(AITestCase):
         event = self.get_events(1)
         data = event['data']['baseData']
         props = data['properties']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Message', "Event type")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Message', "Event type")
         self.assertEqual(event['iKey'], TEST_IKEY)
         self.assertEqual(data['message'], msg, "Log message")
         self.assertEqual(data['severityLevel'], 3, "Severity level")
@@ -349,13 +390,15 @@ class LoggerTests(AITestCase):
         event = self.get_events(1)
         data = event['data']['baseData']
         props = data['properties']
-        self.assertEqual(event['name'], 'Microsoft.ApplicationInsights.Message', "Event type")
+        self.assertEqual(
+            event['name'], 'Microsoft.ApplicationInsights.Message', "Event type")
         self.assertEqual(event['iKey'], TEST_IKEY)
         self.assertEqual(data['message'], msg, "Log message")
         self.assertEqual(data['severityLevel'], 1, "Severity level")
         self.assertEqual(props['fileName'], 'tests.py', "Filename property")
         self.assertEqual(props['level'], 'INFO', "Level property")
         self.assertEqual(props['module'], 'tests', "Module property")
+
 
 class MockSender(SenderBase):
     def __init__(self):
