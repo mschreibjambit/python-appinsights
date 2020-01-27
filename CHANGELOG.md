@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.11.10
 
 - Add `track_availability`.
 - Add option to get and set ai.cloud.roleName
