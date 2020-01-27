@@ -9,23 +9,23 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='applicationinsights',
+    name='appinsights',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='0.12.0',
+    version='0.11.10',
 
     description='This project extends the Application Insights API surface to support Python.',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/Microsoft/ApplicationInsights-Python',
-    download_url='https://github.com/Microsoft/ApplicationInsights-Python',
+    url='https://github.com/brennerm/python-appinsights',
+    download_url='https://github.com/brennerm/python-appinsights',
 
     # Author details
-    author='Microsoft',
-    author_email='appinsightssdk@microsoft.com',
+    author='Max Brenner',
+    author_email='xamrennerb@gmail.com',
 
     # Choose your license
     license='MIT',
