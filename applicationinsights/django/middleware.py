@@ -22,14 +22,15 @@ try:
 except AttributeError:
     TIME_FUNC = time.time
 
+
 class ApplicationInsightsMiddleware(object):
     """This class is a Django middleware that automatically enables request and exception telemetry.  Django versions
     1.7 and newer are supported.
-    
+
     To enable, add this class to your settings.py file in MIDDLEWARE_CLASSES (pre-1.10) or MIDDLEWARE (1.10 and newer):
-    
+
     .. code:: python
-    
+
         # If on Django < 1.10
         MIDDLEWARE_CLASSES = [
             # ... or whatever is below for you ...
@@ -44,7 +45,7 @@ class ApplicationInsightsMiddleware(object):
             # ... or whatever is above for you ...
             'applicationinsights.django.ApplicationInsightsMiddleware',   # Add this middleware to the end
         ]
-        
+
         # If on Django >= 1.10
         MIDDLEWARE = [
             # ... or whatever is below for you ...
@@ -58,42 +59,42 @@ class ApplicationInsightsMiddleware(object):
             # ... or whatever is above for you ...
             'applicationinsights.django.ApplicationInsightsMiddleware',   # Add this middleware to the end
         ]
-    
+
     And then, add the following to your settings.py file:
-    
+
     .. code:: python
-    
+
         APPLICATION_INSIGHTS = {
             # (required) Your Application Insights instrumentation key
             'ikey': "00000000-0000-0000-0000-000000000000",
-            
+
             # (optional) By default, request names are logged as the request method
             # and relative path of the URL.  To log the fully-qualified view names
             # instead, set this to True.  Defaults to False.
             'use_view_name': True,
-            
+
             # (optional) To log arguments passed into the views as custom properties,
             # set this to True.  Defaults to False.
             'record_view_arguments': True,
-            
+
             # (optional) Exceptions are logged by default, to disable, set this to False.
             'log_exceptions': False,
-            
+
             # (optional) Events are submitted to Application Insights asynchronously.
             # send_interval specifies how often the queue is checked for items to submit.
             # send_time specifies how long the sender waits for new input before recycling
             # the background thread.
             'send_interval': 1.0, # Check every second
             'send_time': 3.0, # Wait up to 3 seconds for an event
-            
+
             # (optional, uncommon) If you must send to an endpoint other than the
             # default endpoint, specify it here:
             'endpoint': "https://dc.services.visualstudio.com/v2/track",
         }
-    
+
     Once these are in place, each request will have an `appinsights` object placed on it.
     This object will have the following properties:
-    
+
     * `client`: This is an instance of the :class:`applicationinsights.TelemetryClient` type, which will
       submit telemetry to the same instrumentation key, and will parent each telemetry item to the current
       request.
@@ -102,10 +103,11 @@ class ApplicationInsightsMiddleware(object):
       It will be submitted when the request has finished.
     * `context`: This is the :class:`applicationinsights.channel.TelemetryContext` object for the current
       ApplicationInsights sender.
-    
+
     These properties will be present even when `DEBUG` is `True`, but it may not submit telemetry unless
     `debug_ikey` is set in `APPLICATION_INSIGHTS`, above.
     """
+
     def __init__(self, get_response=None):
         self.get_response = get_response
 
@@ -213,7 +215,8 @@ class ApplicationInsightsMiddleware(object):
             # No actual traceback or exception info, don't bother logging.
             return None
 
-        client = applicationinsights.TelemetryClient(self._client.context.instrumentation_key, self._client.channel)
+        client = applicationinsights.TelemetryClient(
+            self._client.context.instrumentation_key, self._client.channel)
         if hasattr(request, 'appinsights'):
             client.context.operation.parent_id = request.appinsights.request.id
 
@@ -227,6 +230,7 @@ class ApplicationInsightsMiddleware(object):
             data.properties['template_name'] = response.template_name
 
         return response
+
 
 class RequestAddon(object):
     def __init__(self, client):
@@ -243,7 +247,8 @@ class RequestAddon(object):
     def client(self):
         if self._client is None:
             # Create a client that submits telemetry parented to the request.
-            self._client = applicationinsights.TelemetryClient(self.context.instrumentation_key, self._baseclient.channel)
+            self._client = applicationinsights.TelemetryClient(
+                self.context.instrumentation_key, self._baseclient.channel)
             self._client.context.operation.parent_id = self.context.operation.id
 
         return self._client
@@ -254,6 +259,7 @@ class RequestAddon(object):
     def measure_duration(self):
         end_time = TIME_FUNC()
         return ms_to_duration(int((end_time - self._process_start_time) * 1000))
+
 
 def ms_to_duration(n):
     duration_parts = []
@@ -267,6 +273,7 @@ def ms_to_duration(n):
         duration = "%d.%s" % (n, duration)
 
     return duration
+
 
 def arg_to_str(arg):
     if isinstance(arg, basestring):

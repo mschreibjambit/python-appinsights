@@ -3,6 +3,7 @@ import re
 import uuid
 import applicationinsights
 
+
 class WSGIApplication(object):
     """ This class represents a WSGI wrapper that enables request telemetry for existing WSGI applications. The request
     telemetry will be sent to Application Insights service using the supplied instrumentation key.
@@ -29,6 +30,7 @@ class WSGIApplication(object):
 
                 serve(app, host='0.0.0.0')
     """
+
     def __init__(self, instrumentation_key, wsgi_application, *args, **kwargs):
         """
         Initialize a new instance of the class.
@@ -38,15 +40,18 @@ class WSGIApplication(object):
             wsgi_application (func). the WSGI application that we're wrapping.
         """
         if not instrumentation_key:
-            raise Exception('Instrumentation key was required but not provided')
+            raise Exception(
+                'Instrumentation key was required but not provided')
         if not wsgi_application:
             raise Exception('WSGI application was required but not provided')
         telemetry_channel = kwargs.pop('telemetry_channel', None)
         if not telemetry_channel:
             sender = applicationinsights.channel.AsynchronousSender()
             queue = applicationinsights.channel.AsynchronousQueue(sender)
-            telemetry_channel = applicationinsights.channel.TelemetryChannel(None, queue)
-        self.client = applicationinsights.TelemetryClient(instrumentation_key, telemetry_channel)
+            telemetry_channel = applicationinsights.channel.TelemetryChannel(
+                None, queue)
+        self.client = applicationinsights.TelemetryClient(
+            instrumentation_key, telemetry_channel)
         self.client.context.device.type = "PC"
         self._wsgi_application = wsgi_application
         self._common_properties = kwargs.pop('common_properties', {})
@@ -91,18 +96,19 @@ class WSGIApplication(object):
         else:
             response_code = closure['status']
             success = False
-            
+
         url = name
         query_string = environ.get('QUERY_STRING')
         if query_string:
             url += '?' + query_string
 
         scheme = environ.get('wsgi.url_scheme', 'http')
-        host =  environ.get('HTTP_HOST', environ.get('SERVER_NAME', 'unknown'))
+        host = environ.get('HTTP_HOST', environ.get('SERVER_NAME', 'unknown'))
 
         url = scheme + '://' + host + url
 
         end_time = datetime.datetime.utcnow()
         duration = int((end_time - start_time).total_seconds() * 1000)
 
-        self.client.track_request(name, url, success, start_time.isoformat() + 'Z', duration, response_code, http_method, self._common_properties)
+        self.client.track_request(name, url, success, start_time.isoformat(
+        ) + 'Z', duration, response_code, http_method, self._common_properties)

@@ -19,6 +19,7 @@ class QueueBase(object):
     The queue will notify the sender that it needs to pick up items when it reaches :func:`max_queue_length`,
     or when the consumer calls :func:`flush`.
     """
+
     def __init__(self, sender, persistence_path=''):
         """Initializes a new instance of the class.
 
@@ -27,7 +28,8 @@ class QueueBase(object):
             persistence_path (str) if set, persist the queue on disk into the provided directory.
         """
         if persistence_path and PersistQueue is None:
-            raise ValueError('persistence_path argument requires persist-queue dependency to be installed')
+            raise ValueError(
+                'persistence_path argument requires persist-queue dependency to be installed')
         elif persistence_path:
             self._queue = PersistQueue(persistence_path)
         else:

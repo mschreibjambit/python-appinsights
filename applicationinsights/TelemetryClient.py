@@ -13,6 +13,7 @@ class TelemetryClient(object):
     """The telemetry client used for sending all types of telemetry. It serves as the main entry point for
     interacting with the Application Insights service.
     """
+
     def __init__(self, instrumentation_key, telemetry_channel=None):
         """Initializes a new instance of the class.
 
@@ -26,7 +27,8 @@ class TelemetryClient(object):
                 telemetry_channel = instrumentation_key
                 instrumentation_key = None
         else:
-            raise Exception('Instrumentation key was required but not provided')
+            raise Exception(
+                'Instrumentation key was required but not provided')
         self._context = channel.TelemetryContext()
         self._context.instrumentation_key = instrumentation_key
         self._channel = telemetry_channel or channel.TelemetryChannel()
@@ -171,7 +173,6 @@ class TelemetryClient(object):
 
         self.track(data, self._context)
 
-
     def track_trace(self, name, properties=None, severity=None):
         """Sends a single trace statement.
 
@@ -185,10 +186,10 @@ class TelemetryClient(object):
         if properties:
             data.properties = properties
         if severity is not None:
-            data.severity_level = channel.contracts.MessageData.PYTHON_LOGGING_LEVELS.get(severity)
+            data.severity_level = channel.contracts.MessageData.PYTHON_LOGGING_LEVELS.get(
+                severity)
 
         self.track(data, self._context)
-
 
     def track_request(self, name, url, success, start_time=None, duration=None, response_code=None, http_method=None, properties=None, measurements=None, request_id=None):
         """Sends a single request that was captured for the application.
@@ -299,7 +300,7 @@ class TelemetryClient(object):
     def run_telemetry_processors(self, data, context):
         allow_data_through = True
 
-        try:        
+        try:
             for processor in self._telemetry_processors:
                 if processor(data, context) == False:
                     allow_data_through = False
@@ -317,7 +318,8 @@ class TelemetryClient(object):
             local_duration //= multiplier
 
         duration_parts.reverse()
-        duration = '%02d:%02d:%02d.%03d' % (duration_parts[0], duration_parts[1], duration_parts[2], duration_parts[3])
+        duration = '%02d:%02d:%02d.%03d' % (
+            duration_parts[0], duration_parts[1], duration_parts[2], duration_parts[3])
         if local_duration:
             duration = '%d.%s' % (local_duration, duration)
 

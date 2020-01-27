@@ -67,6 +67,7 @@ class AppInsights(object):
             if __name__ == '__main__':
                 app.run()
     """
+
     def __init__(self, app=None):
         """
         Initialize a new instance of the extension.

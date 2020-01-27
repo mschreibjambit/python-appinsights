@@ -15,6 +15,7 @@ ApplicationInsightsChannelSettings = collections.namedtuple("ApplicationInsights
     "send_time",
     "endpoint"])
 
+
 def load_settings():
     if hasattr(settings, "APPLICATION_INSIGHTS"):
         config = settings.APPLICATION_INSIGHTS
@@ -36,8 +37,10 @@ def load_settings():
             send_interval=config.get("send_interval"),
             send_time=config.get("send_time")))
 
+
 saved_clients = {}
 saved_channels = {}
+
 
 def create_client(aisettings=None):
     global saved_clients, saved_channels
@@ -53,7 +56,8 @@ def create_client(aisettings=None):
     if channel_settings in saved_channels:
         channel = saved_channels[channel_settings]
     else:
-        sender = applicationinsights.channel.AsynchronousSender(service_endpoint_uri=channel_settings.endpoint)
+        sender = applicationinsights.channel.AsynchronousSender(
+            service_endpoint_uri=channel_settings.endpoint)
 
         if channel_settings.send_time is not None:
             sender.send_time = channel_settings.send_time
@@ -71,6 +75,7 @@ def create_client(aisettings=None):
     client = applicationinsights.TelemetryClient(aisettings.ikey, channel)
     saved_clients[aisettings] = client
     return client
+
 
 def dummy_client(reason):
     """Creates a dummy channel so even if we're not logging telemetry, we can still send

@@ -1,11 +1,13 @@
 from .QueueBase import QueueBase
 from threading import Event
 
+
 class AsynchronousQueue(QueueBase):
     """An asynchronous queue for use in conjunction with the :class:`AsynchronousSender`. The queue
     will notify the sender that it needs to pick up items when it reaches :func:`max_queue_length`, or
     when the consumer calls :func:`flush` via the :func:`flush_notification` event.
     """
+
     def __init__(self, *args, **kwargs):
         """Initializes a new instance of the class.
         """

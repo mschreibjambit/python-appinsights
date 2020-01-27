@@ -5,6 +5,8 @@ from applicationinsights.channel import contracts
 
 # save off whatever is currently there
 existing_device_initialize = contracts.Device._initialize
+
+
 def device_initialize(self):
     """ The device initializer used to assign special properties to all device context objects"""
     existing_device_initialize(self)
@@ -13,8 +15,10 @@ def device_initialize(self):
     self.os_version = platform.version()
     self.locale = locale.getdefaultlocale()[0]
 
+
 # assign the device context initializer
 contracts.Device._initialize = device_initialize
+
 
 class TelemetryContext(object):
     """Represents the context for sending telemetry to the Application Insights service.
@@ -31,6 +35,7 @@ class TelemetryContext(object):
         context.user.id = 'santa@northpole.net'
         track_trace('My trace with context')
     """
+
     def __init__(self):
         """Initializes a new instance of the class.
         """

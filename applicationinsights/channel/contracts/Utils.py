@@ -1,5 +1,6 @@
 import collections
 
+
 def _write_complex_object(defaults, values):
     output = collections.OrderedDict()
     for key in defaults.keys():
@@ -39,6 +40,6 @@ def _write_complex_object(defaults, values):
                 output[key] = value_copy
         else:
             value_copy = value
-            output[key] = value_copy        
+            output[key] = value_copy
 
     return output

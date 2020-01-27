@@ -11,6 +11,7 @@ except ImportError:
 
 DEFAULT_ENDPOINT_URL = 'https://dc.services.visualstudio.com/v2/track'
 
+
 class SenderBase(object):
     """The base class for all types of senders for use in conjunction with an implementation of :class:`QueueBase`.
 
@@ -18,6 +19,7 @@ class SenderBase(object):
     listen to these notifications and will pull items from the queue getting at most :func:`send_buffer_size` items.
     It will then call :func:`send` using the list of items pulled from the queue.
     """
+
     def __init__(self, service_endpoint_uri):
         """Initializes a new instance of the class.
 
@@ -129,9 +131,10 @@ class SenderBase(object):
         Args:
             data_to_send (Array): an array of :class:`contracts.Envelope` objects to send to the service.
         """
-        request_payload = json.dumps([ a.write() for a in data_to_send ])
+        request_payload = json.dumps([a.write() for a in data_to_send])
 
-        request = HTTPClient.Request(self._service_endpoint_uri, bytearray(request_payload, 'utf-8'), { 'Accept': 'application/json', 'Content-Type' : 'application/json; charset=utf-8' })
+        request = HTTPClient.Request(self._service_endpoint_uri, bytearray(
+            request_payload, 'utf-8'), {'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8'})
         try:
             response = HTTPClient.urlopen(request, timeout=self._timeout)
             status_code = response.getcode()

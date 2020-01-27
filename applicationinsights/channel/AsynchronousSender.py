@@ -1,6 +1,7 @@
 from .SenderBase import SenderBase, DEFAULT_ENDPOINT_URL
 from threading import Lock, Thread
 
+
 class AsynchronousSender(SenderBase):
     """An asynchronous sender that works in conjunction with the :class:`AsynchronousQueue`. The sender object will
     start a worker thread that will pull items from the :func:`queue`. The thread will be created when the client
@@ -13,6 +14,7 @@ class AsynchronousSender(SenderBase):
     If no queue items are found for :func:`send_time` seconds, the worker thread will shut down (and :func:`start` will
     need  to be called again).
     """
+
     def __init__(self, service_endpoint_uri=None):
         """Initializes a new instance of the class.
 

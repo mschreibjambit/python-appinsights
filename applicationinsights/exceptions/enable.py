@@ -5,6 +5,7 @@ original_excepthook = None
 telemetry_channel = None
 enabled_instrumentation_keys = []
 
+
 def enable(instrumentation_key, *args, **kwargs):
     """Enables the automatic collection of unhandled exceptions. Captured exceptions will be sent to the Application
     Insights service before being re-thrown. Multiple calls to this function with different instrumentation keys result

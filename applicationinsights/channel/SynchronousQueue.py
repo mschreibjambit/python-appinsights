@@ -1,5 +1,6 @@
 from .QueueBase import QueueBase
 
+
 class SynchronousQueue(QueueBase):
     """A synchronous queue for use in conjunction with the :class:`SynchronousSender`. The queue will call
     :func:`send` on :func:`sender` when it reaches :func:`max_queue_length`, or when the consumer calls
@@ -12,6 +13,7 @@ class SynchronousQueue(QueueBase):
         queue.max_queue_length = 1
         queue.put(1)
     """
+
     def flush(self):
         """Flushes the current queue by by calling :func:`sender`'s :func:`send` method.
         """
