@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-TDB
+- Add `track_availability`.
 
 ## 0.11.9
 

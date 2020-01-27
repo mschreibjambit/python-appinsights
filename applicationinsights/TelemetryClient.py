@@ -252,6 +252,33 @@ class TelemetryClient(object):
 
         self.track(dependency_data, self._context)
 
+    def track_availability(self, name, duration, success, run_location, message=None, properties=None, measurements=None, availability_id=None):
+        """Sends a single availability telemetry that was captured for the application.
+
+        Args:
+            name (str). the name of the command initiated with this dependency call. Low cardinality value. Examples are stored procedure name and URL path template.\n
+            duration (int). the number of milliseconds that this dependency call lasted.\n
+            success (bool). true if the dependency call ended in success, false otherwise.\n
+            run_location (str). the name of the location where the test has been executed.\n
+            message (str). the message for this availability telemetry. (defaults to: None)\n
+            properties (dict). the set of custom properties the client wants attached to this data item. (defaults to: None)\n
+            measurements (dict). the set of custom measurements the client wants to attach to this data item. (defaults to: None)\n
+            id (str). the id for this dependency call. If None, a new uuid will be generated. (defaults to: None)
+        """
+        availability_data = channel.contracts.AvailabilityData()
+        availability_data.id = availability_id or str(uuid.uuid4())
+        availability_data.name = name
+        availability_data.duration = duration
+        availability_data.success = success
+        availability_data.run_location = run_location
+        availability_data.message = message
+        if properties:
+            availability_data.properties = properties
+        if measurements:
+            availability_data.measurements = measurements
+
+        self.track(availability_data, self._context)
+
     def track(self, data, context):
         if self.run_telemetry_processors(data, context):
             self.channel.write(data, context)

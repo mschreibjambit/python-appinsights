@@ -83,6 +83,15 @@ Once installed, you can send telemetry to Application Insights. Here are a few s
     tc.track_metric('My Metric', 42)
     tc.flush()
 
+**Sending an availability telemetry item**
+
+.. code:: python
+
+    from applicationinsights import TelemetryClient
+    tc = TelemetryClient('<YOUR INSTRUMENTATION KEY GOES HERE>')
+    tc.track_availability('My Service', 250, True, "West Europe")
+    tc.flush()
+
 **Sending an exception telemetry item with custom properties and measurements**
 
 .. code:: python
