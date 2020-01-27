@@ -1,11 +1,11 @@
 Application Insights for Python
 ===============================
 
-.. image:: https://travis-ci.org/Microsoft/ApplicationInsights-Python.svg?branch=master
-    :target: https://travis-ci.org/Microsoft/ApplicationInsights-Python
+.. image:: https://github.com/brennerm/python-appinsights/workflows/.github/workflows/ci.yml/badge.svg
+    :target: .github/workflows/ci.yml
 
-.. image:: https://badge.fury.io/py/applicationinsights.svg
-    :target: http://badge.fury.io/py/applicationinsights
+.. image:: https://badge.fury.io/py/appinsights.svg
+    :target: http://badge.fury.io/py/appinsights
 
 
 This project extends the Application Insights API surface to support Python.
