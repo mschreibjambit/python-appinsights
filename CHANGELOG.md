@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add `track_availability`.
+- Add option to get and set ai.cloud.roleName
 
 ## 0.11.9
 
