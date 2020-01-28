@@ -51,6 +51,7 @@
 <li><p><a class="reference internal" href="#usage-sample-02"><span class="std std-ref">Sending an event telemetry item with custom properties and measurements</span></a></p></li>
 <li><p><a class="reference internal" href="#usage-sample-03"><span class="std std-ref">Sending a trace telemetry item with custom properties</span></a></p></li>
 <li><p><a class="reference internal" href="#usage-sample-04"><span class="std std-ref">Sending a metric telemetry item</span></a></p></li>
+<li><p><a class="reference internal" href="#usage-sample-17"><span class="std std-ref">Sending a metric telemetry item</span></a></p></li>
 <li><p><a class="reference internal" href="#usage-sample-05"><span class="std std-ref">Sending an exception telemetry item with custom properties and measurements</span></a></p></li>
 <li><p><a class="reference internal" href="#usage-sample-06"><span class="std std-ref">Configuring context for a telemetry client instance</span></a></p></li>
 <li><p><a class="reference internal" href="#usage-sample-07"><span class="std std-ref">Configuring channel related properties</span></a></p></li>
@@ -70,12 +71,11 @@ Insights</a> is a service that allows developers to keep their application avail
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>Python 2.7 and Python 3.4 are currently supported by this module.</p>
-<p>For opening the project in Microsoft Visual Studio you will need <a class="reference external" href="http://pytools.codeplex.com/">Python Tools for Visual Studio</a>.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>To install the latest release you can use <a class="reference external" href="http://www.pip-installer.org/">pip</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install applicationinsights
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install appinsights
 </pre></div>
 </div>
 </div>
@@ -115,7 +115,14 @@ section for more information.</p>
 <span class="n">tc</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 </pre></div>
 </div>
-<p id="usage-sample-05"><strong>Sending an exception telemetry item with custom properties and measurements</strong></p>
+<p id="usage-sample-05"><strong>Sending an availability telemetry item</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">applicationinsights</span> <span class="kn">import</span> <span class="n">TelemetryClient</span>
+<span class="n">tc</span> <span class="o">=</span> <span class="n">TelemetryClient</span><span class="p">(</span><span class="s1">&#39;&lt;YOUR INSTRUMENTATION KEY GOES HERE&gt;&#39;</span><span class="p">)</span>
+<span class="n">tc</span><span class="o">.</span><span class="n">track_availability</span><span class="p">(</span><span class="s1">&#39;My Service&#39;</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;West Europe&quot;</span><span class="p">)</span>
+<span class="n">tc</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</pre></div>
+</div>
+<p id="usage-sample-17"><strong>Sending an exception telemetry item with custom properties and measurements</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">applicationinsights</span> <span class="kn">import</span> <span class="n">TelemetryClient</span>
 <span class="n">tc</span> <span class="o">=</span> <span class="n">TelemetryClient</span><span class="p">(</span><span class="s1">&#39;&lt;YOUR INSTRUMENTATION KEY GOES HERE&gt;&#39;</span><span class="p">)</span>
