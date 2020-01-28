@@ -15,6 +15,7 @@ Application Insights SDK for Python
     * :ref:`Sending an event telemetry item with custom properties and measurements <usage-sample-02>`
     * :ref:`Sending a trace telemetry item with custom properties <usage-sample-03>`
     * :ref:`Sending a metric telemetry item <usage-sample-04>`
+    * :ref:`Sending a metric telemetry item <usage-sample-17>`
     * :ref:`Sending an exception telemetry item with custom properties and measurements <usage-sample-05>`
     * :ref:`Configuring context for a telemetry client instance <usage-sample-06>`
     * :ref:`Configuring channel related properties <usage-sample-07>`
@@ -36,8 +37,6 @@ Requirements
 
 Python 2.7 and Python 3.4 are currently supported by this module.
 
-For opening the project in Microsoft Visual Studio you will need `Python Tools for Visual Studio <http://pytools.codeplex.com/>`__.
-
 Installation
 ------------
 
@@ -45,7 +44,7 @@ To install the latest release you can use `pip <http://www.pip-installer.org/>`_
 
 ::
 
-    $ pip install applicationinsights
+    $ pip install appinsights
 
 Usage
 -----
@@ -101,6 +100,17 @@ Once installed, you can send telemetry to Application Insights. Here are a few s
     tc.flush()
 
 .. _usage-sample-05:
+
+**Sending an availability telemetry item**
+
+.. code:: python
+
+    from applicationinsights import TelemetryClient
+    tc = TelemetryClient('<YOUR INSTRUMENTATION KEY GOES HERE>')
+    tc.track_availability('My Service', 250, True, "West Europe")
+    tc.flush()
+
+.. _usage-sample-17:
 
 **Sending an exception telemetry item with custom properties and measurements**
 
